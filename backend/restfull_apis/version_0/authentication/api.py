@@ -72,6 +72,37 @@ def recognize_from_image(image_np, known_faces_dir):
 
     return results
 
+# class RecognizeFaceAPIView(APIView):
+#     permission_classes = [AllowAny]  # Adjust permissions as needed
+#     authentication_classes = (TokenAuthentication,)  # Adjust authentication as needed
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = FaceRecognitionSerializer(data=request.data)
+#         if serializer.is_valid():
+#             image_file = serializer.validated_data['image']
+
+#             try:
+#                 # Read the uploaded image file into a PIL image
+#                 image = Image.open(BytesIO(image_file.read()))
+
+#                 # Convert the PIL image to a NumPy array
+#                 image_np = np.array(image)
+
+#                 # Perform recognition
+#                 results = recognize_from_image(image_np, os.path.join(settings.MEDIA_ROOT, 'data/known_faces'))
+
+#                 if results and results[0] != "No face detected":
+#                     response = {'data': results[0]}  # Return the first result
+#                 else:
+#                     response = {'data': 'Not match'}
+
+#                 return Response(response, status=status.HTTP_200_OK)
+#             except Exception as e:
+#                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class RecognizeFaceAPIView(APIView):
     permission_classes = [AllowAny]  # Adjust permissions as needed
     authentication_classes = (TokenAuthentication,)  # Adjust authentication as needed
@@ -92,7 +123,13 @@ class RecognizeFaceAPIView(APIView):
                 results = recognize_from_image(image_np, os.path.join(settings.MEDIA_ROOT, 'data/known_faces'))
 
                 if results and results[0] != "No face detected":
-                    response = {'data': results[0]}  # Return the first result
+                    matched_name = results[0]
+                    image_url = os.path.join(settings.MEDIA_URL, 'data/known_faces', f'{matched_name}.jpg')
+
+                    response = {
+                        'data': matched_name,  # Return the first result (name of the matched person)
+                        'image_url': request.build_absolute_uri(image_url)  # Absolute URL of the matched image
+                    }
                 else:
                     response = {'data': 'Not match'}
 
