@@ -40,7 +40,7 @@ def load_known_faces(directory):
     known_names = []
     encoder = FaceEncoder()
     for filename in os.listdir(directory):
-        if filename.endswith(".jpg") or filename.endswith(".png"):
+        if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
             image_path = os.path.join(directory, filename)
             name = os.path.splitext(filename)[0]
             face_encodings = encoder.encode_faces(image_path)
@@ -71,36 +71,6 @@ def recognize_from_image(image_np, known_faces_dir):
     results = recognizer.recognize_faces(face_encodings)
 
     return results
-
-# class RecognizeFaceAPIView(APIView):
-#     permission_classes = [AllowAny]  # Adjust permissions as needed
-#     authentication_classes = (TokenAuthentication,)  # Adjust authentication as needed
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = FaceRecognitionSerializer(data=request.data)
-#         if serializer.is_valid():
-#             image_file = serializer.validated_data['image']
-
-#             try:
-#                 # Read the uploaded image file into a PIL image
-#                 image = Image.open(BytesIO(image_file.read()))
-
-#                 # Convert the PIL image to a NumPy array
-#                 image_np = np.array(image)
-
-#                 # Perform recognition
-#                 results = recognize_from_image(image_np, os.path.join(settings.MEDIA_ROOT, 'data/known_faces'))
-
-#                 if results and results[0] != "No face detected":
-#                     response = {'data': results[0]}  # Return the first result
-#                 else:
-#                     response = {'data': 'Not match'}
-
-#                 return Response(response, status=status.HTTP_200_OK)
-#             except Exception as e:
-#                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RecognizeFaceAPIView(APIView):
