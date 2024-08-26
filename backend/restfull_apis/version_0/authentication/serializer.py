@@ -8,7 +8,8 @@ class FaceRecognitionSerializer(serializers.Serializer):
     image = serializers.ImageField()
     # known_faces_dir = serializers.CharField()
 
-class ComplaintSerialzier(serializers.Serializer):
+class ComplaintSerialzier(serializers.ModelSerializer):
 
     class Meta:
+        model = Complaint
         fields = "__all__"
