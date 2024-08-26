@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import (User,Role,)
+from users.models import (User,Role,Complaint)
 from .forms import UserCreationForm
 from import_export.admin import ImportExportModelAdmin
 from django import forms
@@ -29,8 +29,21 @@ class RoleAdmin(ImportExportModelAdmin,admin.ModelAdmin):
         "role_name",
     ]
 
+class ComplaintAdminForm(forms.ModelForm):
 
+    class Meta:
+        model = Complaint
+        fields = "__all__"
+
+
+class ComplaintAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    form =ComplaintAdminForm 
+    list_display = [
+        "complaint_number",
+        "image_url"
+    ]
 
 
 admin.site.register(User,UserAdmin)
 admin.site.register(Role,RoleAdmin)
+admin.site.register(Complaint,ComplaintAdmin)

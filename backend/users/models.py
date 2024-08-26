@@ -47,3 +47,13 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
+class Complaint(BaseModelMixin):
+    complaint_number = models.CharField(max_length=100,blank=True,null=True)
+    image_url = models.ImageField(upload_to='data/known_faces', blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Complaint")
+        verbose_name_plural = _("Complaint")
+    
+    def __str__(self):
+        return f"{self.pk}"
