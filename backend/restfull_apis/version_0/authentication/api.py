@@ -20,7 +20,9 @@ import face_recognition
 from face_recognition_lib.detector import FaceDetector
 from face_recognition_lib.encoder import FaceEncoder
 from face_recognition_lib.recognizer import FaceRecognizer
-from .serializer import FaceRecognitionSerializer
+from .serializer import FaceRecognitionSerializer,ComplaintSerialzier
+from rest_framework import generics
+from users.models import Complaint
 
 # Define the path to known faces in the media directory
 # KNOWN_FACES_DIR = os.path.join(settings.MEDIA_ROOT, 'data/known_faces')
@@ -107,4 +109,26 @@ class RecognizeFaceAPIView(APIView):
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ComplaintGenericAPI(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = ComplaintSerialzier
+
+    def get(self, request, *args, **kwargs):
+        try:
+
+            complaint_obj = Complaint.objects.get(id=kwargs.get('pk'))
+            data = ComplaintSerialzier(complaint_obj).data
+            return Response({"data":data,"message": "Success"},status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"data": {"message": str(e)}, "status": status.HTTP_204_NO_CONTENT})
+
+    def post(self, request, format=None):
+        serializer = ComplaintSerialzier(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
