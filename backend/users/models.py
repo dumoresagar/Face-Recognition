@@ -7,6 +7,7 @@ from core.models import BaseModelMixin
 from rest_framework.authtoken.models import Token
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import os
 
 ACTIVE_CHOICES = (
         ('Active', 'Active'),
@@ -57,3 +58,11 @@ class Complaint(BaseModelMixin):
     
     def __str__(self):
         return f"{self.pk}"
+    
+    def save(self, *args, **kwargs):
+        if self.image_url and self.complaint_number:
+            # Get the file extension
+            file_extension = os.path.splitext(self.image_url.name)[1]
+            # Set the image URL with complaint_number as filename
+            self.image_url.name = f"{self.complaint_number}{file_extension}"
+        super(Complaint, self).save(*args, **kwargs)
