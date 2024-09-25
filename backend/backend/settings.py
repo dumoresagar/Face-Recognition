@@ -219,5 +219,5 @@ PROJECT_MODULES = (
     ('users', 'Users'),
 )
 
-CSRF_TRUSTED_ORIGINS = ['http://27.107.9.132:8001','http://127.0.0.1:3000']
+CSRF_TRUSTED_ORIGINS = ['http://192.168.2.11:8000','http://127.0.0.1:3000']
 CORS_ORIGIN_ALLOW_ALL=True
